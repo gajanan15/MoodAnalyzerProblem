@@ -20,19 +20,21 @@ public class MoodAnalyzerFactory {
 
     public static MoodAnalyzer createMoodAnalyzer() {
         try {
-            Class<?> moodAnalyzerClass = Class.forName("com.moodanalyzer.MoodAnalyzer");
-            Constructor<?> moodConstructor = moodAnalyzerClass.getConstructor();
+            Constructor<?> moodConstructor = Class.forName("com.moodanalyzer.MoodAnalyzer").getConstructor();
             Object myObj = moodConstructor.newInstance();
             return (MoodAnalyzer)myObj;
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        }
+        return null;
+    }
+
+        public static MoodAnalyzer createMoodAnalyzer(String message) {
+        try {
+            Constructor<?> moodConstructor = Class.forName("com.moodanalyzer.MoodAnalyzer").getConstructor(String.class);
+            Object myObj = moodConstructor.newInstance(message);
+            return (MoodAnalyzer)myObj;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

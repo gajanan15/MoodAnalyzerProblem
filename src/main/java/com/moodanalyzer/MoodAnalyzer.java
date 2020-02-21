@@ -34,5 +34,4 @@ public class MoodAnalyzer {
             return true;
         return false;
     }
-
 }
