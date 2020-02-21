@@ -4,6 +4,8 @@ import com.moodanalyzerexception.MoodAnalyzerException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
+
 public class MoodAnalyzerTest {
 
     @Test
@@ -33,7 +35,7 @@ public class MoodAnalyzerTest {
     }
 
     @Test
-    public void givenTsetMoodIsNull_WhenProper_ShouldThrowException() {
+    public void givenTestMoodIsNull_WhenProper_ShouldThrowException() {
         try {
             MoodAnalyzer moodAnalyzer = new MoodAnalyzer();
         } catch (MoodAnalyzerException e) {
@@ -44,10 +46,37 @@ public class MoodAnalyzerTest {
     @Test
     public void givenTestEmptyMood_WhenProper_ShouldThrowException() {
         try {
-            MoodAnalyzer moodAnalyzer = new MoodAnalyzer("");
+            MoodAnalyzer moodAnalyzer = new MoodAnalyzer();
         } catch (MoodAnalyzerException e) {
             Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.EMPTY_MESSAGE,e.type);
         }
+    }
 
+    @Test
+    public void givenTestMoodAnalyzerClassName_ShouldReturnMoodAnalyzerObject() {
+        try{
+            MoodAnalyzer moodAnalyzer = MoodAnalyzerFactory.createMoodAnalyzer();
+            Assert.assertEquals(new MoodAnalyzer(),moodAnalyzer);
+        }catch (MoodAnalyzerException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenClassName_WhenImproper_ShouldThrowMoodAnalysisException() {
+        try{
+            MoodAnalyzerFactory.getConstructor("com.moodanalyzer.MoodAnalyzer1",String.class);
+        }catch(MoodAnalyzerException e) {
+            Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NO_SUCH_CLASS, e.type);
+        }
+    }
+
+    @Test
+    public void givenMoodAnalyzerConstructor_NotProper_ShouldThrowMoodAnalysisException() {
+        try{
+            MoodAnalyzerFactory.getConstructor("com.moodanalyzer.MoodAnalyzer",Integer.class);
+        }catch (MoodAnalyzerException e) {
+            Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.type);
+        }
     }
 }

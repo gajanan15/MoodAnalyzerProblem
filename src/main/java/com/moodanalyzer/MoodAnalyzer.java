@@ -7,7 +7,7 @@ public class MoodAnalyzer {
 
     //Default Constructor
     public MoodAnalyzer(){
-
+        mood="defualt";
     }
 
     //Parameterized Constructor
@@ -15,7 +15,7 @@ public class MoodAnalyzer {
         this.mood=mood;
     }
 
-    public String analyzeMood() throws MoodAnalyzerException {
+    public String analyzeMood(){
         try {
             if (mood.contains("sad")) {
                 return "sad";
@@ -29,4 +29,10 @@ public class MoodAnalyzer {
             throw new MoodAnalyzerException(MoodAnalyzerException.EnumExceptionType.NULL_MESSAGE,"Please Enter Valid Message");
         }
     }
+    public boolean equals(Object another){
+        if(this.mood.equals(((MoodAnalyzer) another).mood))
+            return true;
+        return false;
+    }
+
 }
