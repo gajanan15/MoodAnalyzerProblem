@@ -4,6 +4,7 @@ import com.moodanalyzerexception.MoodAnalyzerException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class MoodAnalyzerFactory {
 
@@ -16,6 +17,27 @@ public class MoodAnalyzerFactory {
         } catch (NoSuchMethodException e) {
             throw new MoodAnalyzerException(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.getMessage());
         }
+    }
+
+    public static  String invokeMethod (String message ,String className,String methodName)
+    {
+        try{
+            Class<?> aClass = Class.forName(className);
+            Object obj = aClass.getConstructor(String.class).newInstance(message);
+            Method declaredMethod = aClass.getMethod(methodName);
+            return  (String) declaredMethod.invoke(obj);
+        } catch (NoSuchMethodException e) {
+            throw new MoodAnalyzerException(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.getMessage());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static MoodAnalyzer createMoodAnalyzer() {
@@ -39,4 +61,5 @@ public class MoodAnalyzerFactory {
         }
         return null;
     }
+
 }

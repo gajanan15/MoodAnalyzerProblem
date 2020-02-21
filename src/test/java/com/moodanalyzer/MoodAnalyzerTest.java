@@ -4,8 +4,6 @@ import com.moodanalyzerexception.MoodAnalyzerException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Constructor;
-
 public class MoodAnalyzerTest {
 
     @Test
@@ -87,6 +85,25 @@ public class MoodAnalyzerTest {
             Assert.assertEquals(new MoodAnalyzer("i am in happy mood"), moodAnalyzer);
         }catch (MoodAnalyzerException e){
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenHappyMessage_WithReflection_ShouldReturnHappy() {
+        try {
+            String analyzeMood = MoodAnalyzerFactory.invokeMethod("i am in happy mood", "com.moodanalyzer.MoodAnalyzer","analyzeMood");
+            Assert.assertEquals("happy",analyzeMood);
+        } catch (MoodAnalyzerException e) {
+            Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.type);
+        }
+    }
+
+    @Test
+    public void givenHappyMessage_WithReflectionImproperMethod_ShouldReturnHappy() {
+        try{
+            String analyzeMood = MoodAnalyzerFactory.invokeMethod("i am in happy mood", "com.moodanalyzer.MoodAnalyzer","analyzeMood1");
+        }catch (MoodAnalyzerException e){
+            Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.type);
         }
     }
 }
