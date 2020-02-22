@@ -8,10 +8,9 @@ public class MoodAnalyzerTest {
 
     @Test
     public void givenTestMoodIsSad_WhenProper_ShouldReturnSad(){
-        String mood;
         try {
             MoodAnalyzer moodAnalyzer = new MoodAnalyzer("I am in sad mood");
-            mood = moodAnalyzer.analyzeMood();
+            String mood = moodAnalyzer.analyzeMood();
             Assert.assertEquals("sad",mood);
 
         } catch (MoodAnalyzerException e) {
@@ -21,10 +20,9 @@ public class MoodAnalyzerTest {
 
     @Test
     public void givenTestMoodIsHappy_WhenProper_ShouldReturnHappy(){
-        String mood;
         try {
             MoodAnalyzer moodAnalyzer = new MoodAnalyzer("I am in happy mood");
-            mood = moodAnalyzer.analyzeMood();
+            String mood = moodAnalyzer.analyzeMood();
             Assert.assertEquals("happy",mood);
 
         } catch (MoodAnalyzerException e) {
@@ -33,25 +31,28 @@ public class MoodAnalyzerTest {
     }
 
     @Test
-    public void givenTestMoodIsNull_WhenProper_ShouldThrowException() {
+    public void givenTestMoodIsNull_WhenProper_ShouldThrowMoodAnalyserException() {
         try {
-            MoodAnalyzer moodAnalyzer = new MoodAnalyzer();
+            MoodAnalyzer moodAnalyzer = new MoodAnalyzer(null);
+            moodAnalyzer.analyzeMood();
         } catch (MoodAnalyzerException e) {
             Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NULL_MESSAGE,e.type);
         }
     }
 
     @Test
-    public void givenTestEmptyMood_WhenProper_ShouldThrowException() {
+    public void givenTestEmptyMood_WhenProper_ShouldThrowMoodAnalyserException() {
         try {
-            MoodAnalyzer moodAnalyzer = new MoodAnalyzer();
+            MoodAnalyzer moodAnalyzer = new MoodAnalyzer("");
+            moodAnalyzer.analyzeMood();
         } catch (MoodAnalyzerException e) {
             Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.EMPTY_MESSAGE,e.type);
         }
     }
 
+    //Reflection
     @Test
-    public void givenTestMoodAnalyzerClassName_ShouldReturnMoodAnalyzerObject() {
+    public void givenTestMoodAnalyzerClassNameUsingDefaultConstructor_WhenProper_ShouldReturnObject() {
         try{
             MoodAnalyzer moodAnalyzer = MoodAnalyzerFactory.createMoodAnalyzer();
             Assert.assertEquals(new MoodAnalyzer(),moodAnalyzer);
@@ -79,7 +80,7 @@ public class MoodAnalyzerTest {
     }
 
     @Test
-    public void givenTestMoodAnalyzerObjectWithParameter_ShouldReturnMoodAnalyzerObject() {
+    public void givenTestMoodAnalyzerObjectWithParameter_WhenProper_ShouldReturnObject() {
         try {
             MoodAnalyzer moodAnalyzer = MoodAnalyzerFactory.createMoodAnalyzer("i am in happy mood");
             Assert.assertEquals(new MoodAnalyzer("i am in happy mood"), moodAnalyzer);
@@ -89,21 +90,50 @@ public class MoodAnalyzerTest {
     }
 
     @Test
-    public void givenHappyMessage_WithReflection_ShouldReturnHappy() {
+    public void givenProperMethodName_WhenInvoked_ShouldReturnHappy() {
         try {
-            String analyzeMood = MoodAnalyzerFactory.invokeMethod("i am in happy mood", "com.moodanalyzer.MoodAnalyzer","analyzeMood");
-            Assert.assertEquals("happy",analyzeMood);
+            MoodAnalyzer moodObj = MoodAnalyzerFactory.createMoodAnalyzer("i am in happy mood");
+            String mood=MoodAnalyzerFactory.invokeMethod(moodObj,"analyzeMood");
+            Assert.assertEquals("happy",mood);
         } catch (MoodAnalyzerException e) {
             Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.type);
         }
     }
 
     @Test
-    public void givenHappyMessage_WithReflectionImproperMethod_ShouldReturnHappy() {
+    public void givenMethodName_WhenImproper_ShouldThrowMoodAnalyserException() {
         try{
-            String analyzeMood = MoodAnalyzerFactory.invokeMethod("i am in happy mood", "com.moodanalyzer.MoodAnalyzer","analyzeMood1");
+            MoodAnalyzer moodObj = MoodAnalyzerFactory.createMoodAnalyzer("i am in happy mood");
+            String analyzeMood = MoodAnalyzerFactory.invokeMethod(moodObj, "analyzeMood1");
         }catch (MoodAnalyzerException e){
             Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.type);
+        }
+    }
+
+    @Test
+    public void givenMethodName_WhenNotProper_ShouldThrowMoodAnalysisExceptionTest1() {
+        MoodAnalyzer moodAnalyzer = MoodAnalyzerFactory.createMoodAnalyzer();
+        String mood = MoodAnalyzerFactory.setFieldValue(moodAnalyzer,"i am in happy mood", "mood");
+        Assert.assertEquals("happy",mood);
+    }
+
+    @Test
+    public void givenMethodName_WhenNotProper_ShouldThrowMoodAnalysisExceptionTest2() {
+        try {
+            MoodAnalyzer moodAnalyzer = MoodAnalyzerFactory.createMoodAnalyzer();
+            String mood = MoodAnalyzerFactory.setFieldValue(moodAnalyzer,"i am in happy mood", "moodd");
+        }catch (MoodAnalyzerException e){
+            Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.NO_SUCH_FIELD,e.type);
+        }
+    }
+
+    @Test
+    public void givenMethodName_WhenNotProper_ShouldThrowMoodAnalysisExceptionTest3() {
+        try{
+            MoodAnalyzer moodAnalyzer = MoodAnalyzerFactory.createMoodAnalyzer();
+            String mood = MoodAnalyzerFactory.setFieldValue(moodAnalyzer,null, "mood");
+        }catch (MoodAnalyzerException e){
+            Assert.assertEquals(MoodAnalyzerException.EnumExceptionType.OBJECT_CREATION_ISSUE,e.type);
         }
     }
 }

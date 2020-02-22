@@ -3,8 +3,8 @@ package com.moodanalyzer;
 import com.moodanalyzerexception.MoodAnalyzerException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class MoodAnalyzerFactory {
 
@@ -19,22 +19,15 @@ public class MoodAnalyzerFactory {
         }
     }
 
-    public static  String invokeMethod (String message ,String className,String methodName)
+    public static  String invokeMethod (MoodAnalyzer obj,String methodName)
     {
         try{
-            Class<?> aClass = Class.forName(className);
-            Object obj = aClass.getConstructor(String.class).newInstance(message);
-            Method declaredMethod = aClass.getMethod(methodName);
-            return  (String) declaredMethod.invoke(obj);
+            return  (String) obj.getClass().getMethod(methodName).invoke(obj);
         } catch (NoSuchMethodException e) {
             throw new MoodAnalyzerException(MoodAnalyzerException.EnumExceptionType.NO_SUCH_METHOD,e.getMessage());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
             e.printStackTrace();
         }
         return null;
@@ -62,4 +55,21 @@ public class MoodAnalyzerFactory {
         return null;
     }
 
+    public static String setFieldValue(MoodAnalyzer obj,String message, String mood) {
+        try {
+            Field field = obj.getClass().getDeclaredField(mood);
+            field.setAccessible(true);
+            field.set(obj,message);
+            return  (String) obj.getClass().getMethod("analyzeMood").invoke(obj);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            throw new MoodAnalyzerException(MoodAnalyzerException.EnumExceptionType.OBJECT_CREATION_ISSUE,e.getMessage());
+        } catch (NoSuchFieldException e) {
+            throw new MoodAnalyzerException(MoodAnalyzerException.EnumExceptionType.NO_SUCH_FIELD,e.getMessage());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
